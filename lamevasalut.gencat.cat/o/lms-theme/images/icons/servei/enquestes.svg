@@ -1,0 +1,11 @@
+<svg width="80" height="80" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M29.6 68.8004H18C14.6863 68.8004 12 66.1141 12 62.8004V12.4004C12 9.08668 14.6863 6.40039 18 6.40039H54C57.3137 6.40039 60 9.08668 60 12.4004V33.6004" stroke="#2F2F2C" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M34.4008 65.5994L58.4008 41.5994L64.8008 47.9994L40.8008 73.5994H32.8008L34.4008 65.5994Z" stroke="#2F2F2C" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M68 44.6318L61.7678 38.3996C62.8641 37.3045 63.2297 36.9655 63.579 36.7924C64.3483 36.4111 65.2517 36.4111 66.021 36.7924C66.3791 36.9698 66.7543 37.3216 67.9161 38.4835C69.078 39.6454 69.4298 40.0205 69.6072 40.3786C69.9885 41.148 69.9885 42.0513 69.6072 42.8207C69.4341 43.1699 69.0951 43.5355 68 44.6318Z" stroke="#2F2F2C" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+<mask id="path-4-inside-1_387_2102" fill="white">
+<rect x="18.4004" y="12.8008" width="35.2" height="12.8" rx="2"/>
+</mask>
+<rect x="18.4004" y="12.8008" width="35.2" height="12.8" rx="2" stroke="#2F2F2C" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" mask="url(#path-4-inside-1_387_2102)"/>
+<path d="M52 38.3996V34.2996C52 33.913 51.6866 33.5996 51.3 33.5996H20.7C20.3134 33.5996 20 33.913 20 34.2996V42.4996C20 42.8862 20.3134 43.1996 20.7 43.1996H47.6364" stroke="#2F2F2C" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M42.4 51.2012H20.7C20.3134 51.2012 20 51.5146 20 51.9012V60.1012C20 60.4878 20.3134 60.8012 20.7 60.8012H32.2669" stroke="#2F2F2C" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>
