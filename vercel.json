@@ -1,0 +1,9 @@
+{
+  "redirects": [
+    {
+      "source": "/",
+      "destination": "/lamevasalut.gencat.cat/group/cps/cites-agenda/agenda.html",
+      "permanent": false
+    }
+  ]
+}
