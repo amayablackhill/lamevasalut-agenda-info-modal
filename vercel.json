@@ -1,4 +1,14 @@
 {
+  "rewrites": [
+    {
+      "source": "/lamevasalut.gencat.cat/group/o/:path*",
+      "destination": "/lamevasalut.gencat.cat/o/:path*"
+    },
+    {
+      "source": "/group/o/:path*",
+      "destination": "/lamevasalut.gencat.cat/o/:path*"
+    }
+  ],
   "redirects": [
     {
       "source": "/",
