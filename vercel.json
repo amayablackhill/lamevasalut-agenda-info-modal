@@ -1,6 +1,10 @@
 {
   "rewrites": [
     {
+      "source": "/o/:path*",
+      "destination": "/lamevasalut.gencat.cat/o/:path*"
+    },
+    {
       "source": "/lamevasalut.gencat.cat/group/o/:path*",
       "destination": "/lamevasalut.gencat.cat/o/:path*"
     },
