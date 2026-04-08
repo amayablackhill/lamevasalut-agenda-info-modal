@@ -1931,11 +1931,22 @@ Per a m&eacute;s informaci&oacute;			</span>
 }
 
 .lms-visitinfo-dialog {
+    --visitinfo-surface: #ffffff;
+    --visitinfo-text: #1d1d1b;
+    --visitinfo-muted: #595956;
+    --visitinfo-accent: #3c75bd;
+    --visitinfo-accent-soft: #eaf2fd;
+    --visitinfo-border: #c4d8f7;
+    --visitinfo-radius: 0.85rem;
+    --visitinfo-section-gap: 0.9rem;
+    --visitinfo-heading-size: 1rem;
+    --visitinfo-body-size: 0.96rem;
+    --visitinfo-line-height: 1.45;
     width: 100%;
     max-width: 560px;
     border: 3px solid #8ebcf9;
     border-radius: 1.25rem;
-    background: #ffffff;
+    background: var(--visitinfo-surface);
     box-shadow: 0 18px 45px rgba(0, 0, 0, 0.25);
     padding: 1.5rem;
     position: relative;
@@ -1960,28 +1971,139 @@ Per a m&eacute;s informaci&oacute;			</span>
 }
 
 .lms-visitinfo-body {
-    font-size: 1rem;
-    color: #595956;
+    font-size: var(--visitinfo-body-size);
+    color: var(--visitinfo-muted);
+    line-height: var(--visitinfo-line-height);
     margin: 0;
+    max-height: min(62vh, 660px);
+    overflow-y: auto;
+    padding-right: 0.25rem;
 }
 
-.lms-visitinfo-body h3 {
-    font-size: 1rem;
-    margin: 1rem 0 0.5rem;
-    color: #1d1d1b;
+.lms-visitinfo-accordion {
+    display: grid;
+    gap: var(--visitinfo-section-gap);
 }
 
-.lms-visitinfo-body p {
-    margin: 0 0 0.75rem;
+.lms-visitinfo-accordion-item {
+    border: 1px solid var(--visitinfo-border);
+    border-radius: var(--visitinfo-radius);
+    background: #f8fbff;
+    overflow: hidden;
 }
 
-.lms-visitinfo-body ul {
-    margin: 0 0 1rem;
+.lms-visitinfo-accordion-item[data-warning-critical="true"] {
+    border-color: var(--visitinfo-accent);
+    background: var(--visitinfo-accent-soft);
+}
+
+.lms-visitinfo-accordion-trigger {
+    width: 100%;
+    border: 0;
+    background: transparent;
+    color: var(--visitinfo-text);
+    text-align: left;
+    padding: 0.9rem 1rem;
+    font-size: var(--visitinfo-heading-size);
+    font-weight: 700;
+    line-height: 1.25;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    cursor: pointer;
+}
+
+.lms-visitinfo-accordion-trigger:hover {
+    background: rgba(60, 117, 189, 0.08);
+}
+
+.lms-visitinfo-accordion-trigger:focus {
+    outline: 0;
+}
+
+.lms-visitinfo-accordion-trigger:focus-visible {
+    box-shadow: inset 0 0 0 3px rgba(60, 117, 189, 0.35);
+}
+
+.lms-visitinfo-accordion-chevron {
+    color: var(--visitinfo-accent);
+    font-size: 0.9rem;
+    flex: 0 0 auto;
+    transition: transform 0.2s ease;
+}
+
+.lms-visitinfo-accordion-trigger[aria-expanded="true"] .lms-visitinfo-accordion-chevron {
+    transform: rotate(180deg);
+}
+
+.lms-visitinfo-accordion-panel {
+    display: block;
+    max-height: 1200px;
+    opacity: 1;
+    transition: max-height 0.25s ease, opacity 0.2s ease;
+}
+
+.lms-visitinfo-accordion-panel[hidden] {
+    display: block !important;
+    max-height: 0;
+    opacity: 0;
+    overflow: hidden;
+    pointer-events: none;
+    visibility: hidden;
+}
+
+.lms-visitinfo-accordion-panel-inner {
+    padding: 0 1rem 1rem;
+}
+
+.lms-visitinfo-accordion-panel-inner p {
+    margin: 0 0 0.7rem;
+}
+
+.lms-visitinfo-accordion-panel-inner ul {
+    margin: 0 0 0.85rem;
     padding-left: 1.25rem;
 }
 
-.lms-visitinfo-body li {
+.lms-visitinfo-accordion-panel-inner li {
     margin: 0 0 0.35rem;
+}
+
+.lms-visitinfo-accordion-panel-inner h3 {
+    margin: 1rem 0 0.45rem;
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: var(--visitinfo-text);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .lms-visitinfo-accordion-chevron,
+    .lms-visitinfo-accordion-panel {
+        transition: none;
+    }
+}
+
+@media (max-width: 992px) {
+    .lms-visitinfo-dialog {
+        padding: 1.15rem;
+    }
+
+    .lms-visitinfo-body {
+        max-height: 68vh;
+        padding-right: 0;
+    }
+
+    .lms-visitinfo-accordion-trigger {
+        padding: 0.8rem 0.85rem;
+        font-size: 0.95rem;
+    }
+
+    .lms-visitinfo-accordion-panel-inner {
+        padding: 0 0.85rem 0.85rem;
+        overflow-wrap: anywhere;
+        word-break: break-word;
+    }
 }
 </style>
 
@@ -2341,6 +2463,7 @@ Per a m&eacute;s informaci&oacute;			</span>
   
 
 
+<script src="visit-info-accordion-helpers.js"></script>
 <script>
 
     function downloadFile(file, fileName, fileType) {
@@ -2394,27 +2517,43 @@ Per a m&eacute;s informaci&oacute;			</span>
         var closeButton = document.getElementById('visitInfoClose');
         var activeTrigger = null;
         var visitInfoPayload = null;
+        var accordionHelpers = window.VisitInfoAccordionHelpers;
+
+        if (
+            !accordionHelpers ||
+            typeof accordionHelpers.groupBlocksByHeading !== 'function' ||
+            typeof accordionHelpers.computeInitialExpandedSectionId !== 'function' ||
+            typeof accordionHelpers.computeNextExpandedSectionId !== 'function'
+        ) {
+            console.warn('[visit-info-modal] Missing VisitInfoAccordionHelpers module');
+            return;
+        }
 
         function createBlockElement(block) {
+            if (!block || !block.type) {
+                return null;
+            }
+
             var element;
 
             if (block.type === 'heading') {
                 element = document.createElement('h3');
-                element.textContent = block.text;
+                element.textContent = block.text || '';
                 return element;
             }
 
             if (block.type === 'paragraph') {
                 element = document.createElement('p');
-                element.textContent = block.text;
+                element.textContent = block.text || '';
                 return element;
             }
 
             if (block.type === 'list') {
                 element = document.createElement('ul');
-                for (var idx = 0; idx < block.items.length; idx += 1) {
+                var items = Array.isArray(block.items) ? block.items : [];
+                for (var idx = 0; idx < items.length; idx += 1) {
                     var item = document.createElement('li');
-                    item.textContent = block.items[idx];
+                    item.textContent = items[idx];
                     element.appendChild(item);
                 }
                 return element;
@@ -2423,16 +2562,109 @@ Per a m&eacute;s informaci&oacute;			</span>
             return null;
         }
 
-        function renderBlocks(blocks) {
+        function renderAccordion(sectionId, blocks) {
             body.innerHTML = '';
 
-            for (var i = 0; i < blocks.length; i += 1) {
-                var blockElement = createBlockElement(blocks[i]);
-                if (!blockElement) {
-                    continue;
-                }
-                body.appendChild(blockElement);
+            var blockEntries = [];
+            for (var idx = 0; idx < blocks.length; idx += 1) {
+                blockEntries.push(blocks[idx]);
             }
+
+            var sections = accordionHelpers.groupBlocksByHeading(sectionId, blockEntries);
+
+            if (!sections.length) {
+                return;
+            }
+
+            var expandedSectionId = accordionHelpers.computeInitialExpandedSectionId(sections);
+            var accordion = document.createElement('div');
+            accordion.className = 'lms-visitinfo-accordion';
+
+            function setExpandedSection(nextSectionId) {
+                var items = accordion.querySelectorAll('.lms-visitinfo-accordion-item');
+                for (var nodeIdx = 0; nodeIdx < items.length; nodeIdx += 1) {
+                    var item = items[nodeIdx];
+                    var trigger = item.querySelector('.lms-visitinfo-accordion-trigger');
+                    var panel = item.querySelector('.lms-visitinfo-accordion-panel');
+                    var isExpanded = item.getAttribute('data-section-id') === nextSectionId;
+
+                    item.setAttribute('data-expanded', isExpanded ? 'true' : 'false');
+                    trigger.setAttribute('aria-expanded', isExpanded ? 'true' : 'false');
+                    panel.hidden = !isExpanded;
+                }
+            }
+
+            function onToggle(sectionToToggle, event) {
+                if (event && event.type === 'keydown') {
+                    if (event.key !== 'Enter' && event.key !== ' ') {
+                        return;
+                    }
+                    event.preventDefault();
+                }
+
+                var targetSectionId = sectionToToggle.id;
+                expandedSectionId = accordionHelpers.computeNextExpandedSectionId(
+                    expandedSectionId,
+                    targetSectionId
+                );
+
+                setExpandedSection(expandedSectionId);
+            }
+
+            for (var i = 0; i < sections.length; i += 1) {
+                var section = sections[i];
+                var item = document.createElement('section');
+                var triggerId = section.id + '-trigger';
+                var panelId = section.id + '-panel';
+
+                item.className = 'lms-visitinfo-accordion-item';
+                item.setAttribute('data-section-id', section.id);
+                item.setAttribute('data-warning-critical', section.isWarningCritical ? 'true' : 'false');
+
+                var triggerButton = document.createElement('button');
+                triggerButton.type = 'button';
+                triggerButton.className = 'lms-visitinfo-accordion-trigger';
+                triggerButton.id = triggerId;
+                triggerButton.setAttribute('aria-controls', panelId);
+
+                var triggerLabel = document.createElement('span');
+                triggerLabel.textContent = section.heading;
+                triggerButton.appendChild(triggerLabel);
+
+                var chevron = document.createElement('span');
+                chevron.className = 'lms-visitinfo-accordion-chevron';
+                chevron.textContent = '▾';
+                chevron.setAttribute('aria-hidden', 'true');
+                triggerButton.appendChild(chevron);
+
+                var panel = document.createElement('div');
+                panel.className = 'lms-visitinfo-accordion-panel';
+                panel.id = panelId;
+                panel.setAttribute('role', 'region');
+                panel.setAttribute('aria-labelledby', triggerId);
+
+                var panelInner = document.createElement('div');
+                panelInner.className = 'lms-visitinfo-accordion-panel-inner';
+
+                for (var blockIdx = 0; blockIdx < section.contentBlocks.length; blockIdx += 1) {
+                    var blockElement = createBlockElement(section.contentBlocks[blockIdx]);
+                    if (blockElement) {
+                        panelInner.appendChild(blockElement);
+                    }
+                }
+
+                panel.appendChild(panelInner);
+
+                triggerButton.addEventListener('click', onToggle.bind(null, section));
+                triggerButton.addEventListener('keydown', onToggle.bind(null, section));
+
+                item.appendChild(triggerButton);
+                item.appendChild(panel);
+                accordion.appendChild(item);
+            }
+
+            body.appendChild(accordion);
+            setExpandedSection(expandedSectionId);
         }
 
         function getSectionById(sectionId) {
@@ -2467,7 +2699,7 @@ Per a m&eacute;s informaci&oacute;			</span>
 
             if (!section) {
                 title.textContent = 'Informació de la visita';
-                renderBlocks([]);
+                renderAccordion(sectionId, []);
                 modal.setAttribute('data-visit-info-state', 'missing');
                 console.warn('[visit-info-modal] Unknown or unavailable section id:', sectionId);
             } else {
@@ -2476,10 +2708,22 @@ Per a m&eacute;s informaci&oacute;			</span>
 
                 var blocks = [];
                 if (Array.isArray(visitInfoPayload.warning)) {
-                    blocks = blocks.concat(visitInfoPayload.warning);
+                    for (var warningIdx = 0; warningIdx < visitInfoPayload.warning.length; warningIdx += 1) {
+                        blocks.push({
+                            source: 'warning',
+                            block: visitInfoPayload.warning[warningIdx]
+                        });
+                    }
                 }
-                blocks = blocks.concat(section.blocks || []);
-                renderBlocks(blocks);
+                var sectionBlocks = Array.isArray(section.blocks) ? section.blocks : [];
+                for (var sectionIdx = 0; sectionIdx < sectionBlocks.length; sectionIdx += 1) {
+                    blocks.push({
+                        source: 'section',
+                        block: sectionBlocks[sectionIdx]
+                    });
+                }
+
+                renderAccordion(sectionId, blocks);
             }
 
             modal.classList.remove('hidden');
