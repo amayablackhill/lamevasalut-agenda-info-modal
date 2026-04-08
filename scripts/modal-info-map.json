@@ -1,0 +1,36 @@
+{
+  "cards": [
+    {
+      "cardId": "radiografies-convencionals-rx",
+      "sectionId": "1"
+    },
+    {
+      "cardId": "tc-abdomen-sense-contrast",
+      "sectionId": "2"
+    },
+    {
+      "cardId": "tc-torax-amb-contrast",
+      "sectionId": "3"
+    },
+    {
+      "cardId": "rm-abdomen-sense-contrast",
+      "sectionId": "4"
+    },
+    {
+      "cardId": "rm-torax-amb-contrast",
+      "sectionId": "5"
+    },
+    {
+      "cardId": "ecografia-abdomen-amb-contrast",
+      "sectionId": "6"
+    },
+    {
+      "cardId": "ecografia-tiroide",
+      "sectionId": "7"
+    },
+    {
+      "cardId": "biopsia-mama-guiada-ecografia",
+      "sectionId": "8"
+    }
+  ]
+}

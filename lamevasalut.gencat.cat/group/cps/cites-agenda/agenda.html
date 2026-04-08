@@ -1964,6 +1964,25 @@ Per a m&eacute;s informaci&oacute;			</span>
     color: #595956;
     margin: 0;
 }
+
+.lms-visitinfo-body h3 {
+    font-size: 1rem;
+    margin: 1rem 0 0.5rem;
+    color: #1d1d1b;
+}
+
+.lms-visitinfo-body p {
+    margin: 0 0 0.75rem;
+}
+
+.lms-visitinfo-body ul {
+    margin: 0 0 1rem;
+    padding-left: 1.25rem;
+}
+
+.lms-visitinfo-body li {
+    margin: 0 0 0.35rem;
+}
 </style>
 
 
@@ -1996,8 +2015,7 @@ Per a m&eacute;s informaci&oacute;			</span>
                     <button
                         type="button"
                         class="lms-visitinfo-trigger"
-                        data-info-title="Rayos convencionales (Rx)"
-                        data-info-body="Aquest espai mostrarà la informació detallada de la visita quan estigui disponible."
+                        data-visit-info-id="1"
                         aria-haspopup="dialog"
                         aria-controls="visitInfoModal"
                         aria-label="Més informació de la visita"
@@ -2036,8 +2054,7 @@ Per a m&eacute;s informaci&oacute;			</span>
                     <button
                         type="button"
                         class="lms-visitinfo-trigger"
-                        data-info-title="TC Abdominal"
-                        data-info-body="Aquest espai mostrarà la informació detallada de la visita quan estigui disponible."
+                        data-visit-info-id="2"
                         aria-haspopup="dialog"
                         aria-controls="visitInfoModal"
                         aria-label="Més informació de la visita"
@@ -2076,8 +2093,7 @@ Per a m&eacute;s informaci&oacute;			</span>
                     <button
                         type="button"
                         class="lms-visitinfo-trigger"
-                        data-info-title="TC Torácico con contraste"
-                        data-info-body="Aquest espai mostrarà la informació detallada de la visita quan estigui disponible."
+                        data-visit-info-id="3"
                         aria-haspopup="dialog"
                         aria-controls="visitInfoModal"
                         aria-label="Més informació de la visita"
@@ -2116,8 +2132,7 @@ Per a m&eacute;s informaci&oacute;			</span>
                     <button
                         type="button"
                         class="lms-visitinfo-trigger"
-                        data-info-title="RM Abdominal"
-                        data-info-body="Aquest espai mostrarà la informació detallada de la visita quan estigui disponible."
+                        data-visit-info-id="4"
                         aria-haspopup="dialog"
                         aria-controls="visitInfoModal"
                         aria-label="Més informació de la visita"
@@ -2156,8 +2171,7 @@ Per a m&eacute;s informaci&oacute;			</span>
                     <button
                         type="button"
                         class="lms-visitinfo-trigger"
-                        data-info-title="RM Torácica con contraste"
-                        data-info-body="Aquest espai mostrarà la informació detallada de la visita quan estigui disponible."
+                        data-visit-info-id="5"
                         aria-haspopup="dialog"
                         aria-controls="visitInfoModal"
                         aria-label="Més informació de la visita"
@@ -2196,8 +2210,7 @@ Per a m&eacute;s informaci&oacute;			</span>
                     <button
                         type="button"
                         class="lms-visitinfo-trigger"
-                        data-info-title="Ecografía Abdominal con contraste"
-                        data-info-body="Aquest espai mostrarà la informació detallada de la visita quan estigui disponible."
+                        data-visit-info-id="6"
                         aria-haspopup="dialog"
                         aria-controls="visitInfoModal"
                         aria-label="Més informació de la visita"
@@ -2236,8 +2249,7 @@ Per a m&eacute;s informaci&oacute;			</span>
                     <button
                         type="button"
                         class="lms-visitinfo-trigger"
-                        data-info-title="Ecografía de tiroides"
-                        data-info-body="Aquest espai mostrarà la informació detallada de la visita quan estigui disponible."
+                        data-visit-info-id="7"
                         aria-haspopup="dialog"
                         aria-controls="visitInfoModal"
                         aria-label="Més informació de la visita"
@@ -2276,8 +2288,7 @@ Per a m&eacute;s informaci&oacute;			</span>
                     <button
                         type="button"
                         class="lms-visitinfo-trigger"
-                        data-info-title="Biopsia de mama guiada por ecografía"
-                        data-info-body="Aquest espai mostrarà la informació detallada de la visita quan estigui disponible."
+                        data-visit-info-id="8"
                         aria-haspopup="dialog"
                         aria-controls="visitInfoModal"
                         aria-label="Més informació de la visita"
@@ -2320,7 +2331,7 @@ Per a m&eacute;s informaci&oacute;			</span>
             <div class="lms-visitinfo-dialog">
                 <button type="button" class="lms-visitinfo-close" id="visitInfoClose" aria-label="Tancar">×</button>
                 <h2 class="lms-visitinfo-title" id="visitInfoModalTitle">Informació de la visita</h2>
-                <p class="lms-visitinfo-body" id="visitInfoModalBody">Aquest espai mostrarà la informació detallada de la visita quan estigui disponible.</p>
+                <div class="lms-visitinfo-body" id="visitInfoModalBody"></div>
             </div>
         </div>
     
@@ -2382,11 +2393,94 @@ Per a m&eacute;s informaci&oacute;			</span>
         var body = document.getElementById('visitInfoModalBody');
         var closeButton = document.getElementById('visitInfoClose');
         var activeTrigger = null;
+        var visitInfoPayload = null;
+
+        function createBlockElement(block) {
+            var element;
+
+            if (block.type === 'heading') {
+                element = document.createElement('h3');
+                element.textContent = block.text;
+                return element;
+            }
+
+            if (block.type === 'paragraph') {
+                element = document.createElement('p');
+                element.textContent = block.text;
+                return element;
+            }
+
+            if (block.type === 'list') {
+                element = document.createElement('ul');
+                for (var idx = 0; idx < block.items.length; idx += 1) {
+                    var item = document.createElement('li');
+                    item.textContent = block.items[idx];
+                    element.appendChild(item);
+                }
+                return element;
+            }
+
+            return null;
+        }
+
+        function renderBlocks(blocks) {
+            body.innerHTML = '';
+
+            for (var i = 0; i < blocks.length; i += 1) {
+                var blockElement = createBlockElement(blocks[i]);
+                if (!blockElement) {
+                    continue;
+                }
+                body.appendChild(blockElement);
+            }
+        }
+
+        function getSectionById(sectionId) {
+            if (!visitInfoPayload || !visitInfoPayload.sections) {
+                return null;
+            }
+            return visitInfoPayload.sections[sectionId] || null;
+        }
+
+        function loadVisitInfoPayload() {
+            return fetch('modal-info.generated.json')
+                .then(function(response) {
+                    if (!response.ok) {
+                        throw new Error('Unable to load modal-info.generated.json');
+                    }
+                    return response.json();
+                })
+                .then(function(payload) {
+                    visitInfoPayload = payload;
+                })
+                .catch(function(error) {
+                    visitInfoPayload = null;
+                    console.warn('[visit-info-modal]', error);
+                });
+        }
 
         function openModal(trigger) {
             activeTrigger = trigger;
-            title.textContent = trigger.getAttribute('data-info-title') || 'Informació de la visita';
-            body.textContent = trigger.getAttribute('data-info-body') || 'Aquest espai mostrarà la informació detallada de la visita quan estigui disponible.';
+
+            var sectionId = trigger.getAttribute('data-visit-info-id');
+            var section = getSectionById(sectionId);
+
+            if (!section) {
+                title.textContent = 'Informació de la visita';
+                renderBlocks([]);
+                modal.setAttribute('data-visit-info-state', 'missing');
+                console.warn('[visit-info-modal] Unknown or unavailable section id:', sectionId);
+            } else {
+                title.textContent = section.title;
+                modal.setAttribute('data-visit-info-state', 'ready');
+
+                var blocks = [];
+                if (Array.isArray(visitInfoPayload.warning)) {
+                    blocks = blocks.concat(visitInfoPayload.warning);
+                }
+                blocks = blocks.concat(section.blocks || []);
+                renderBlocks(blocks);
+            }
 
             modal.classList.remove('hidden');
             backdrop.classList.remove('hidden');
@@ -2422,6 +2516,8 @@ Per a m&eacute;s informaci&oacute;			</span>
                 closeModal();
             }
         });
+
+        loadVisitInfoPayload();
     })();
 
 </script>
