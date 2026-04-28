@@ -2707,14 +2707,6 @@ Per a m&eacute;s informaci&oacute;			</span>
                 modal.setAttribute('data-visit-info-state', 'ready');
 
                 var blocks = [];
-                if (Array.isArray(visitInfoPayload.warning)) {
-                    for (var warningIdx = 0; warningIdx < visitInfoPayload.warning.length; warningIdx += 1) {
-                        blocks.push({
-                            source: 'warning',
-                            block: visitInfoPayload.warning[warningIdx]
-                        });
-                    }
-                }
                 var sectionBlocks = Array.isArray(section.blocks) ? section.blocks : [];
                 for (var sectionIdx = 0; sectionIdx < sectionBlocks.length; sectionIdx += 1) {
                     blocks.push({
